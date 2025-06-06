@@ -88,4 +88,3 @@ sequenceDiagram
     BusinessLogic-->>API: Success (filtered list)
     API-->>User: 200 OK (list of places)
 ```
-
