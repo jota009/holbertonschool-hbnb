@@ -99,3 +99,8 @@ The HBnB application utilizes a **three-layer architecture**:
 - [UML Sequence Diagram Tutorial](https://www.uml-diagrams.org/sequence-diagrams.html)
 - [Mermaid.js Documentation](https://mermaid-js.github.io/)
 - [draw.io](https://app.diagrams.net/)
+
+---
+✍️ **Author**
+**Josniel Ramos** • Student at Holberton School
+GitHub: [@jota009](https://github.com/jota009)
