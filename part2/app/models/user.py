@@ -7,7 +7,7 @@ EMAIL_REGEX = re.compile(r"^[^@]+@[^@]+\.[^@]+$")
 
 class User(BaseModel):
     def __init__(self, first_name: str, last_name: str, email: str, is_admin=False):
-        super().__init__
+        super().__init__()
         # Basic validation
         if not first_name or len(first_name) > 50:
             raise ValueError("first_name is required (≤50 chars)")
