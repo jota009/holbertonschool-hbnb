@@ -1,6 +1,8 @@
 from app.persistence.repository import InMemoryRepository
+from app.models.place import Place
 from app.models.user import User
 from app.models.amenity import Amenity
+
 
 class HBnBFacade:
     # repositories for each source
@@ -63,7 +65,6 @@ class HBnBFacade:
         self.amenity_repo.add(amenity)
         return amenity
 
-
     def get_amenity(self, amenity_id):
         """
         Retrieve an Amenity by its UUID.
@@ -71,13 +72,11 @@ class HBnBFacade:
         """
         return self.amenity_repo.get(amenity_id)
 
-
     def get_all_amenities(self):
         """
         Return a list of all Amenity instances.
         """
         return self.amenity_repo.get_all()
-
 
     def update_amenity(self, amenity_id, amenity_data):
         """
@@ -90,8 +89,42 @@ class HBnBFacade:
         amenity.update(amenity_data)
         return amenity
 
+    # ----Place methods----
+    def create_place(self, data):
+        """
+        - Validate owner_id & amenities list
+        - Instantiate Place(owner=User, **attrs)
+        - Attach amenities via place.add_amenity(...)
+        - Store and run
+        """
+        owner_id = data.pop('owner_id')
+        amenity_ids = data.pop('amenities', [])
 
-    # Other resorce placeholders
+        owner = self.get_user(owner_id)
+        if not owner:
+            raise ValueError("Owner not found")
+
+        # Validate numeric fields (Place constructor also covers this)
+        place = Place(owner=owner, **data)
+
+        for aid in amenity_ids:
+            amen = self.get_amenity(aid)
+            if not amen:
+                raise ValueError(f"Amenity {aid} not found")
+            place.add_amenity(amen)
+
+        self.place_repo.add(place)
+        return place
+
     def get_place(self, place_id):
-        # Logic will be implemented in later tasks
-        pass
+        return self.place_repo.get(place_id)
+
+    def get_all_places(self):
+        return self.place_repo.get_all()
+
+    def update_place(self, place_id, data):
+        place = self.get_place(place_id)
+        if not place:
+            return None
+        place.update(data)
+        return place
