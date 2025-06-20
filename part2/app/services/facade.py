@@ -1,6 +1,6 @@
 from app.persistence.repository import InMemoryRepository
 from app.models.user import User
-
+from app.models.amenity import Amenity
 
 class HBnBFacade:
     # repositories for each source
@@ -52,6 +52,43 @@ class HBnBFacade:
             return None
         user.update(user_data)
         return user
+
+    # ----Amenity methods----
+    def create_amenity(self, amenity_data):
+        """
+        Create a new Amenity instance from the provided dict,
+        add it to the repository, and return the Amenity.
+        """
+        amenity = Amenity(**amenity_data)
+        self.amenity_repo.add(amenity)
+        return amenity
+
+
+    def get_amenity(self, amenity_id):
+        """
+        Retrieve an Amenity by its UUID.
+        Returns None if not found.
+        """
+        return self.amenity_repo.get(amenity_id)
+
+
+    def get_all_amenities(self):
+        """
+        Return a list of all Amenity instances.
+        """
+        return self.amenity_repo.get_all()
+
+
+    def update_amenity(self, amenity_id, amenity_data):
+        """
+        Find an Amenity by ID, apply updates, and return the updated Amenity.
+        Returns None if the amenity does not exist.
+        """
+        amenity = self.get_amenity(amenity_id)
+        if not amenity:
+            return None
+        amenity.update(amenity_data)
+        return amenity
 
 
     # Other resorce placeholders
