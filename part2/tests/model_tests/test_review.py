@@ -25,7 +25,7 @@ def test_review_creation_valid():
     assert isinstance(review.id, str) and len(review.id) > 0
 
 def test_review_invalid_inputs():
-    """Empty text or out‐of‐range ratings should raise ValueError."""
+    """Empty, whitespace-only text or out-of-range/non-int ratings should raise ValueError."""
     user = User(first_name="Jane", last_name="Smith", email="jane.smith@example.com")
     place = Place(
         title="Cozy Cottage",
@@ -39,9 +39,19 @@ def test_review_invalid_inputs():
     # missing text
     with pytest.raises(ValueError):
         Review(text="", rating=3, place=place, user=user)
+
+    # whitespace-only text
+    with pytest.raises(ValueError):
+        Review(text="   ", rating=3, place=place, user=user)
+
     # rating below 1
     with pytest.raises(ValueError):
         Review(text="OK", rating=0, place=place, user=user)
+
     # rating above 5
     with pytest.raises(ValueError):
         Review(text="OK", rating=6, place=place, user=user)
+
+    # non-integer rating
+    with pytest.raises(ValueError):
+        Review(text="OK", rating=4.5, place=place, user=user)

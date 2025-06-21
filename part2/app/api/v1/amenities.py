@@ -1,4 +1,4 @@
-from flask_restx import Namespace, Resource, fields
+from flask_restx import Namespace, Resource, fields, abort
 from app.services import facade
 
 
@@ -21,7 +21,12 @@ class AmenityList(Resource):
     @api.marshal_with(amenity_model, code=201)
     def post(self):
         """Create a new amenity"""
-        return facade.create_amenity(api.payload), 201
+        try:
+            amenity = facade.create_amenity(api.payload)
+            return amenity, 201
+        except ValueError as e:
+            abort(400, str(e))
+
 
 @api.route('/<string:amenity_id>')
 class AmenityResource(Resource):
@@ -40,9 +45,12 @@ class AmenityResource(Resource):
     @api.response(404, 'Amenity not found')
     def put(self, amenity_id):
         """Update an existing amenity"""
-        updated = facade.update_amenity(amenity_id, api.payload)
-        if not updated:
-            api.abort(404, 'Amenity not found')
-        return updated, 200
+        try:
+            updated = facade.update_amenity(amenity_id, api.payload)
+            if not updated:
+                abort(404, 'Amenity not found')
+            return updated, 200
+        except ValueError as e:
+            abort(400, str(e))
 
 

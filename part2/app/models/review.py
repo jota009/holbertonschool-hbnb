@@ -9,8 +9,8 @@ class Review(BaseModel):
         super().__init__()
 
         # Validate the review text
-        if not text:
-            raise ValueError("Review text is required")
+        if not text or not text.strip():
+            raise ValueError("Review text cannot be empty")
 
         # Validate the rating
         if not isinstance(rating, int) or not (1 <= rating <= 5):
@@ -28,5 +28,4 @@ class Review(BaseModel):
         self.place = place
         self.user = user
 
-        # Link this review back to the place
         place.add_review(self)

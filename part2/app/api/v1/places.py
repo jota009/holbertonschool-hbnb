@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields, abort
 from app.services import facade
+from app.api.v1.reviews import review_model as place_review_model
 
 
 api = Namespace('places', description='Place operations')
@@ -44,7 +45,8 @@ place_detail = api.model('PlaceDetail', {
     'latitude': fields.Float,
     'longitude': fields.Float,
     'owner': fields.Nested(user_model),
-    'amenities': fields.List(fields.Nested(amenity_model))
+    'amenities': fields.List(fields.Nested(amenity_model)),
+    'reviews': fields.List(fields.Nested(place_review_model), description='List of reviews')
 })
 
 # ----Partial update schema (Optional but implemented to pass al tests)----
@@ -97,3 +99,13 @@ class PlaceResource(Resource):
             return updated, 200
         except ValueError as err:
             abort(400, str(err))
+
+@api.route('/<string:place_id>/reviews')
+class PlaceReviewList(Resource):
+    @api.marshal_list_with(place_review_model)
+    def get(self, place_id):
+        """List all reviews for a specific place"""
+        try:
+            return facade.get_reviews_by_place(place_id), 200
+        except ValueError:
+            abort(404, 'Place not found')
