@@ -29,3 +29,8 @@ htmlcov/
 build/
 dist/
 *.egg-info/
+
+# Local scripts
+smoke_review.sh
+
+
