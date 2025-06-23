@@ -122,10 +122,6 @@ All endpoints are rooted at `/api/v1` and return JSON. Status codes follow REST 
 
 ---
 
-> *Short, precise, and ready for VSCode!*
-
----
-
 ## 🖋️ Author
 
 * **Name**: Josniel Ramos
