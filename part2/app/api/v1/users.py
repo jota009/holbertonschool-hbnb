@@ -12,6 +12,14 @@ user_model = api.model('User', {
     'email': fields.String(required=True, description='Email of the user')
 })
 
+user_input = api.model('UserInput', {
+    'first_name': fields.String(required=True, description='First name'),
+    'last_name': fields.String(required=True, description='Last name'),
+    'email': fields.String(required=True, description='Valid email of the user'),
+    'password': fields.String(required=True, description='Plaintext password', min_length=6),
+    'is_admin': fields.Boolean(default=False, description='Admin flag')
+})
+
 
 # List & Create: /api/v1/users/
 @api.route('/')
@@ -23,10 +31,11 @@ class UserList(Resource):
         # Returns a list of User objects; flask-restx will serialize fields
         return users, 200
 
-    @api.expect(user_model, validate=True)
+    @api.expect(user_input, validate=True)
     @api.marshal_with(user_model, code=201)
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered or invalid data')
+    # NEXT TO DO: Edit post method to handle password hashing
     def post(self):
         """Register a new user"""
         data = api.payload
