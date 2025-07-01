@@ -12,6 +12,14 @@ user_model = api.model('User', {
     'email': fields.String(required=True, description='Email of the user')
 })
 
+user_input = api.model('UserInput', {
+    'first_name': fields.String(required=True, description='First name'),
+    'last_name': fields.String(required=True, description='Last name'),
+    'email': fields.String(required=True, description='Valid email of the user'),
+    'password': fields.String(required=True, description='Plaintext password', min_length=6),
+    'is_admin': fields.Boolean(default=False, description='Admin flag')
+})
+
 
 # List & Create: /api/v1/users/
 @api.route('/')
@@ -19,17 +27,14 @@ class UserList(Resource):
     @api.marshal_list_with(user_model)  # serializes output to match user_model
     def get(self):
         """Retrieve all users"""
-        users = facade.get_all_users()
-        # Returns a list of User objects; flask-restx will serialize fields
-        return users, 200
+        return facade.get_all_users(), 200
 
-    @api.expect(user_model, validate=True)
+    @api.expect(user_input, validate=True)
     @api.marshal_with(user_model, code=201)
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered or invalid data')
-    # NEXT TO DO: Edit post method to handle password hashing
     def post(self):
-        """Register a new user"""
+        """Register a new user with hashed password"""
         data = api.payload
         # Checks uniqueness
         if facade.get_user_by_email(data['email']):

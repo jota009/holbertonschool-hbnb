@@ -1,5 +1,6 @@
 import re
 from app.models.base_model import BaseModel
+from app.extensions import bcrypt
 
 
 EMAIL_REGEX = re.compile(r"^[^@]+@[^@]+\.[^@]+$")
@@ -22,3 +23,12 @@ class User(BaseModel):
         self.email = email.lower()
         self.is_admin = bool(is_admin)
         self.password = None
+
+    def hash_password(self, password):
+        """Hashes the password before storing it."""
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def verify_password(self, password):
+        """Verifies the provided password against the stored hash."""
+        return bcrypt.check_password_hash(self.password, password)
+

@@ -1,0 +1,38 @@
+# Byte-compiled / optimized Python files
+__pycache__/
+**/__pycache__
+*.pyc
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.venv/
+
+# IDE/editor folders
+.vscode/
+.idea/
+
+# pytest cache
+.pytest_cache/
+
+# MacOS filesystem files
+.DS_Store
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Coverage reports
+htmlcov/
+.coverage
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Local scripts
+smoke_review.sh
+
+
