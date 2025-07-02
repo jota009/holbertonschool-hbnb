@@ -16,10 +16,18 @@ class HBnBFacade:
     # User methods, Create and Read
     def create_user(self, user_data):
         """
-        Create a new User instance from the provided dict,
-        add it to the repository, and return the User.
-        """
-        user = User(**user_data)
+        Create a new User, hash its password, persist it, and return it"""
+        # Pull out raw password
+        raw_pwd = user_data.get('password')
+
+        user = User(
+            first_name=user_data['first_name'],
+            last_name=user_data['last_name'],
+            email=user_data['email'],
+            is_admin=user_data.get('is_admin', False)
+        )
+        # Hash & store pawd
+        user.hash_password(raw_pwd)
         self.user_repo.add(user)
         return user
 
