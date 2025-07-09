@@ -9,15 +9,19 @@ def client():
         yield c
 
 def test_user_crud_flow(client):
-    # CREATE
+    # CREATE (now requires password & is_admin)
     rv = client.post(
         '/api/v1/users/',
-        json={'first_name':'Bob','last_name':'Builder','email':'bob@build.com'}
+        json={
+            'first_name': 'Bob',
+            'last_name': 'Builder',
+            'email': 'bob@build.com',
+            'password': 'BobPass123',
+            'is_admin': False
+        }
     )
     assert rv.status_code == 201
-    user = rv.get_json()
-    assert 'id' in user
-    user_id = user['id']
+    user_id = rv.get_json()['id']
 
     # LIST
     rv = client.get('/api/v1/users/')
@@ -31,11 +35,27 @@ def test_user_crud_flow(client):
     single = rv.get_json()
     assert single['email']=='bob@build.com'
 
-    # UPDATE
+    # UPDATE (jwtrequired; only first_name, last_name allowed)
+    # -- log in to get a token
+    rv = client.post('/api/v1/auth/login',
+                    json={'email':'bob@build.com','password':'BobPass123'})
+    assert rv.status_code == 200, "Login should succeed"
+    token = rv.get_json()['access_token']
+    headers = {'Authorization': f'Bearer {token}'}
+
     rv = client.put(
         f'/api/v1/users/{user_id}',
-        json={'first_name':'Robert','last_name':'Builder','email':'robert@build.com'}
+        headers=headers,
+        json={'first_name': 'Robert', 'last_name': 'Builder'}
     )
     assert rv.status_code == 200
     updated = rv.get_json()
-    assert updated['first_name']=='Robert'
+    assert updated['first_name'] == 'Robert'
+
+    # EMAIL CHANGE ATTEMPT → 400
+    rv = client.put(
+        f'/api/v1/users/{user_id}',
+        headers=headers,
+        json={'email': 'hacker@example.com'}
+    )
+    assert rv.status_code == 400

@@ -9,14 +9,28 @@ def client():
         yield client
 
 def test_place_crud_flow(client):
-    # 1️⃣ Create a User prerequisite
+    # 1️⃣ Create & login a User (with password)
     rv = client.post(
         '/api/v1/users/',
-        json={'first_name':'Tester','last_name':'McTest','email':'tester@example.com'}
+        json={
+            'first_name': 'Tester',
+            'last_name': 'User',
+            'email': 'tester@example.com',
+            'password': 'Test1234',
+            'is_admin': False
+        }
     )
     assert rv.status_code == 201
-    user = rv.get_json()
-    user_id = user['id']
+    user_id = rv.get_json()['id']
+
+    # 1️⃣a) Login the User to get JWT token
+    rv = client.post(
+        '/api/v1/auth/login',
+        json={'email': 'tester@example.com', 'password': 'Test1234'}
+    )
+    assert rv.status_code == 200
+    token = rv.get_json()['access_token']
+    headers = {'Authorization': f'Bearer {token}'}
 
     # 2️⃣ Create an Amenity prerequisite
     rv = client.post(
@@ -34,10 +48,10 @@ def test_place_crud_flow(client):
         'price':       120.0,
         'latitude':    45.0,
         'longitude':   -73.0,
-        'owner_id':    user_id,
+        # 'owner_id':    user_id,
         'amenities':   [amenity_id]
     }
-    rv = client.post('/api/v1/places/', json=place_data)
+    rv = client.post('/api/v1/places/', headers=headers, json=place_data)
     assert rv.status_code == 201
     place = rv.get_json()
     assert place['title'] == 'Cozy Cottage'
@@ -61,6 +75,7 @@ def test_place_crud_flow(client):
     # 6️⃣ UPDATE the Place
     rv = client.put(
         f'/api/v1/places/{place_id}',
+        headers=headers,
         json={'price': 150.0}
     )
     assert rv.status_code == 200

@@ -34,5 +34,6 @@ dist/
 
 # Local scripts
 smoke_review.sh
+smoke_tests.sh
 
 
