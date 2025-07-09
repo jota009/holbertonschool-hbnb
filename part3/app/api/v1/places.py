@@ -1,4 +1,5 @@
 from flask_restx import Namespace, Resource, fields, abort
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services import facade
 from app.api.v1.reviews import review_model as place_review_model
 
@@ -24,8 +25,19 @@ place_input = api.model('PlaceInput', {
     'price': fields.Float(required=True, description='Price per night'),
     'latitude': fields.Float(required=True, description='Latitude (-90 to 90)'),
     'longitude': fields.Float(required=True, description='Longitude (-180 to 180)'),
-    'owner_id': fields.String(required=True, description='Owner User UUID'),
+    # 'owner_id': fields.String(required=True, description='Owner User UUID'),
     'amenities': fields.List(fields.String, required=True, description='List of Amenity UUIDs')
+})
+
+# ----Update schema ----
+place_update = api.model('PlaceUpdate', {
+    'title': fields.String(description='Title'),
+    'description': fields.String(description='Description'),
+    'price': fields.Float(description='Price per night'),
+    'latitude': fields.Float(description='Latitude (-90 to 90)'),
+    'longitude': fields.Float(description='Longitude (-180 to 180)'),
+    # 'owner_id': fields.String(description='Owner User UUID'),
+    'amenities': fields.List(fields.String, description='List of Amenity UUIDs')
 })
 
 # Lightweight listing schema
@@ -49,16 +61,7 @@ place_detail = api.model('PlaceDetail', {
     'reviews': fields.List(fields.Nested(place_review_model), description='List of reviews')
 })
 
-# ----Partial update schema (Optional but implemented to pass al tests)----
-place_update = api.model('PlaceUpdate', {
-    'title': fields.String(description='Title'),
-    'description': fields.String(description='Description'),
-    'price': fields.Float(description='Price per night'),
-    'latitude': fields.Float(description='Latitude (-90 to 90)'),
-    'longitude': fields.Float(description='Longitude (-180 to 180)'),
-    'owner_id': fields.String(description='Owner User UUID'),
-    'amenities': fields.List(fields.String, description='List of Amenity UUIDs')
-})
+
 
 
 @api.route('/')
@@ -68,12 +71,16 @@ class PlaceList(Resource):
         """List all places"""
         return facade.get_all_places(), 200
 
+    @jwt_required()
     @api.expect(place_input, validate=True)
     @api.marshal_with(place_detail, code=201)
     def post(self):
-        """Create a new place"""
+        """Authenticated: Create a new place(owner set from token)"""
+        user_id = get_jwt_identity()
+        data = api.payload.copy()
+        data['owner_id'] = user_id
         try:
-            place = facade.create_place(api.payload)
+            place = facade.create_place(data)
             return place, 201
         except ValueError as err:
             abort(400, str(err))
@@ -82,20 +89,25 @@ class PlaceList(Resource):
 class PlaceResource(Resource):
     @api.marshal_with(place_detail)
     def get(self, place_id):
-        """Retrieve a place by ID (with owner & amenities)"""
+        """Public: Retrieve a place by ID (with owner, amenities & reviews)"""
         place = facade.get_place(place_id)
         if not place:
             abort(404, 'Place not found')
         return place, 200
 
+    @jwt_required()
     @api.expect(place_update, validate=True)
     @api.marshal_with(place_detail)
     def put(self, place_id):
-        """Update an existing place"""
+        """Authenticated: Update an existing place (owner only)"""
+        user_id = get_jwt_identity()
+        place = facade.get_place(place_id)
+        if not place:
+            abort(404, 'Place not found')
+        if place.owner.id != user_id:
+            abort(403, 'Unauthorized action')
         try:
             updated = facade.update_place(place_id, api.payload)
-            if not updated:
-                abort(404, 'Place not found')
             return updated, 200
         except ValueError as err:
             abort(400, str(err))
@@ -104,7 +116,7 @@ class PlaceResource(Resource):
 class PlaceReviewList(Resource):
     @api.marshal_list_with(place_review_model)
     def get(self, place_id):
-        """List all reviews for a specific place"""
+        """Public: List all reviews for a specific place"""
         try:
             return facade.get_reviews_by_place(place_id), 200
         except ValueError:

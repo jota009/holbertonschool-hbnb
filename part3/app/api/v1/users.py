@@ -1,4 +1,5 @@
-from flask_restx import Namespace, Resource, fields
+from flask_restx import Namespace, Resource, fields, abort
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services import facade
 
 # Define the namespace
@@ -20,6 +21,10 @@ user_input = api.model('UserInput', {
     'is_admin': fields.Boolean(default=False, description='Admin flag')
 })
 
+user_update = api.model('UserUpdate', {
+    'first_name': fields.String(description='First name'),
+    'last_name': fields.String(description='Last name')
+})
 
 # List & Create: /api/v1/users/
 @api.route('/')
@@ -58,23 +63,27 @@ class UserResource(Resource):
             api.abort(404, 'User not found')
         return user, 200
 
-    @api.expect(user_model, validate=True)
+    @jwt_required()
+    @api.expect(user_update, validate=True)
     @api.marshal_with(user_model)
     @api.response(200, 'User updated')
+    @api.response(400, 'Cannot modify email or password')
+    @api.response(403, 'Unauthorized action')
     @api.response(404, 'User not found')
-    @api.response(400, 'Invalid data or email conflict')
     def put(self, user_id):
-        """Update an existing user"""
-        user = facade.get_user(user_id)
-        if not user:
-            api.abort(404, 'User not found')
+        """Authenticated: modify your own user details (no email/password)"""
+        current_user = get_jwt_identity()
+        # Ensure the user is modifying their own record
+        if user_id != current_user:
+            abort(403, 'Unauthorized action')
 
         data = api.payload
-        # Prevent email conflict on update
-        existing = facade.get_user_by_email(data['email'])
-        if existing and existing.id != user_id:
-            api.abort(400, 'Email already registered to another user')
+        # Prevent email/password changes
+        if 'email' in data or 'password' in data:
+            abort(400, 'You cannot modify email or password')
 
-        # Delegate the update
+        # Perform update
         updated = facade.update_user(user_id, data)
+        if not updated:
+            abort(404, 'User not found')
         return updated, 200
