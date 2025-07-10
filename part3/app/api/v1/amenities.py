@@ -1,4 +1,5 @@
 from flask_restx import Namespace, Resource, fields, abort
+# from flask_jwt_extended import jwt_required, get_jwt
 from app.services import facade
 
 
@@ -6,7 +7,7 @@ api = Namespace('amenities', description='Amenity operations')
 
 amenity_model = api.model('Amenity', {
     'id': fields.String(readonly=True, description='Amenity UUID'),
-    'name': fields.String(required=True, description='Name of the amenity')
+    'name': fields.String(required=True, description='Amenity name')
 })
 
 
@@ -17,10 +18,15 @@ class AmenityList(Resource):
         """List all amenities"""
         return facade.get_all_amenities(), 200
 
+    # @jwt_required()
     @api.expect(amenity_model, validate=True)
     @api.marshal_with(amenity_model, code=201)
+    # @api.response(403, 'Admin privileges required')
     def post(self):
-        """Create a new amenity"""
+        """Public: Create a new amenity"""
+        # claims = get_jwt()
+        # if not claims.get('is_admin'):
+            # abort(403, 'Admin privileges required')
         try:
             amenity = facade.create_amenity(api.payload)
             return amenity, 201
@@ -33,18 +39,22 @@ class AmenityResource(Resource):
     @api.marshal_with(amenity_model)
     @api.response(404, 'Amenity not found')
     def get(self, amenity_id):
-        """Get amenity details by ID"""
+        """Public: Get amenity details by ID"""
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
-            api.abort(404, 'Amenity not found')
+            abort(404, 'Amenity not found')
         return amenity, 200
 
-
+    # @jwt_required()
     @api.expect(amenity_model, validate=True)
     @api.marshal_with(amenity_model)
+    # @api.response(403, 'Admin privileges required')
     @api.response(404, 'Amenity not found')
     def put(self, amenity_id):
-        """Update an existing amenity"""
+        """Public: Update an existing amenity"""
+        # claims = get_jwt()
+        # if not claims.get('is_admin'):
+            # abort(403, 'Admin privileges required')
         try:
             updated = facade.update_amenity(amenity_id, api.payload)
             if not updated:
@@ -52,5 +62,3 @@ class AmenityResource(Resource):
             return updated, 200
         except ValueError as e:
             abort(400, str(e))
-
-

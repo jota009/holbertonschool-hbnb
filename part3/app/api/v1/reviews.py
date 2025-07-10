@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource, fields, abort
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
 
 
@@ -27,6 +27,7 @@ review_update = api.model('ReviewUpdate', {
     'rating':   fields.Integer(description='Rating (1–5)')
 })
 
+
 @api.route('/')
 class ReviewList(Resource):
     @api.marshal_list_with(review_model)
@@ -37,6 +38,8 @@ class ReviewList(Resource):
     @jwt_required()
     @api.expect(review_input, validate=True)
     @api.marshal_list_with(review_model, code=201)
+    @api.response(400, 'Cannot review own place or duplicate review')
+    @api.response(404, 'Place not found')
     def post(self):
         """Authenticated: Register a new review (not on your own place)"""
         user_id = get_jwt_identity()
@@ -59,6 +62,7 @@ class ReviewList(Resource):
 @api.route('/<string:review_id>')
 class ReviewResource(Resource):
     @api.marshal_with(review_model)
+    @api.response(404, 'Review not found')
     def get(self, review_id):
         """Public: get a single review"""
         review = facade.get_review(review_id)
@@ -69,13 +73,20 @@ class ReviewResource(Resource):
     @jwt_required()
     @api.expect(review_update, validate=True)
     @api.marshal_with(review_model)
+    @api.response(200, 'Review updated')
+    @api.response(403, 'Unauthorized action')
+    @api.response(404, 'Review not found')
     def put(self, review_id):
         """Authenticated: Update your own review"""
         user_id = get_jwt_identity()
+        is_admin = get_jwt().get('is_admin', False)
+
         review = facade.get_review(review_id)
         if not review:
             abort(404, 'Review not found')
-        if review.user.id != user_id:
+
+        # Only owner or admin can update
+        if not is_admin and review.user.id != user_id:
             abort(403, 'Unauthorized action')
 
         updated = facade.update_review(review_id, api.payload)
@@ -86,15 +97,17 @@ class ReviewResource(Resource):
     @api.response(404, 'Review not found')
     @api.response(403, 'Unauthorized action')
     def delete(self, review_id):
-        """Authenticated: delete your own review"""
+        """Authenticated: delete your own review (admin can delete any)"""
         user_id = get_jwt_identity()
+        is_admin = get_jwt().get('is_admin', False)
+
         review = facade.get_review(review_id)
         if not review:
             abort(404, 'Review not found')
-        if review.user.id != user_id:
+        # Only owner or admin can delete
+        if not is_admin and review.user.id != user_id:
             abort(403, 'Unauthorized action')
 
-        deleted = facade.delete_review(review_id)
-        if not deleted:
+        if not facade.delete_review(review_id):
             abort(500, 'Could not delete review')
         return {'message': 'Review deleted successfully'}, 200
