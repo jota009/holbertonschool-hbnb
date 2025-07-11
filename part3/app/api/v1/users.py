@@ -52,23 +52,28 @@ class UserList(Resource):
     def post(self):
         """
         Public: Register a new user.
-        If you try to set is_admin=True, you must supply a valid admin JWT.
+        If you try to set is_admin=True, you must supply a valid admin JWT—
+        except if you are the *very first* user in the system.
         """
         data = api.payload.copy()
-        # if they asked for admin account, enforce admin-only
-        if data.get('is_admin'):
-            claims = get_jwt()
-            if not claims.get('is_admin'):
-                abort(403, 'Admin privileges required to create admin accounts')
+        want_admin   = data.get('is_admin', False)
+        users        = facade.get_all_users()
+        admin_exists = any(u.is_admin for u in users)
+
+        if want_admin:
+            # after the very first admin, require an existing admin's token
+            if admin_exists:
+                claims = get_jwt()
+                if not claims.get('is_admin', False):
+                    abort(403, 'Admin privileges required to create admin accounts')
         else:
-            # nobody is allowed to elevate themselves to admin
             data['is_admin'] = False
-        # Checks email uniqueness
+
+        # enforce unique email
         if facade.get_user_by_email(data['email']):
             abort(400, 'Email already registered')
-        # Create and return
+
         user = facade.create_user(data)
-        # Returns only specific fields
         return user, 201
 
 

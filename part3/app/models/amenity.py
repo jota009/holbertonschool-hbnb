@@ -1,9 +1,9 @@
-from app.models.base_model import BaseModel
-
+from app.extensions import db
+from .base_model import BaseModel
 
 class Amenity(BaseModel):
-    def __init__(self, name: str):
-        super().__init__() #serial#, timestamps
-        if not name or len(name) > 50:
-            raise ValueError("Amenity name is required (<50 chars)")
-        self.name = name
+    __tablename__ = 'amenities'
+
+    name = db.Column(db.String(100),
+                     unique=True,
+                     nullable=False)

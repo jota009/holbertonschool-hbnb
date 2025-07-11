@@ -19,7 +19,7 @@ class Login(Resource):
         data = api.payload
         user = facade.get_user_by_email(data['email'])
         if not user or not user.verify_password(data['password']):
-            return {'error': 'Invalid credentials'}, 401
+            return {'message': 'Invalid credentials'}, 401
         access_token = create_access_token(
             identity=str(user.id),
             additional_claims={'is_admin': user.is_admin})

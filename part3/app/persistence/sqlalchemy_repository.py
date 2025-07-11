@@ -1,5 +1,6 @@
 from app.extensions import db
 from .repository import Repository
+from sqlalchemy.exc import IntegrityError
 
 class SQLAlchemyRepository(Repository):
     def __init__(self, model):
@@ -7,8 +8,13 @@ class SQLAlchemyRepository(Repository):
 
     def add(self, obj):
         db.session.add(obj)
-        db.session.commit()
-        return obj
+        try:
+            db.session.commit()
+            return obj
+        except IntegrityError:
+            db.session.rollback()
+            # Return None so the API can handle the duplicate error gracefully
+            return None
 
     def get(self, obj_id):
         return self.model.query.get(obj_id)
@@ -21,8 +27,13 @@ class SQLAlchemyRepository(Repository):
         if obj:
             for key, value in data.items():
                 setattr(obj, key, value)
-            db.session.commit()
-        return obj
+            try:
+                db.session.commit()
+                return obj
+            except IntegrityError:
+                db.session.rollback()
+                return None
+        return None
 
     def delete(self, obj_id):
         obj = self.get(obj_id)
