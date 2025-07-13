@@ -13,3 +13,11 @@ class Review(BaseModel):
     user_id  = db.Column(db.String(36),
                          db.ForeignKey('users.id'),
                          nullable=False)
+
+
+    # one-to-many: User → Review (gives User.reviews)
+    user = db.relationship(
+        'User',
+        backref=db.backref('reviews', lazy='select', cascade='all, delete-orphan'),
+        lazy='joined'
+    )

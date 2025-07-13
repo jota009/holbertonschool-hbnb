@@ -2,6 +2,7 @@ from app.extensions import db
 from .repository import Repository
 from sqlalchemy.exc import IntegrityError
 
+
 class SQLAlchemyRepository(Repository):
     def __init__(self, model):
         self.model = model

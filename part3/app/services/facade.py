@@ -1,21 +1,21 @@
-from app.models.user    import User
-from app.models.place   import Place
-from app.models.review  import Review
+from app.models.user import User
+from app.models.place import Place
+from app.models.review import Review
 from app.models.amenity import Amenity
 from flask_jwt_extended import get_jwt_identity
 
 
-from app.persistence.user_repository    import UserRepository
-from app.persistence.place_repository   import PlaceRepository
-from app.persistence.review_repository  import ReviewRepository
+from app.persistence.user_repository import UserRepository
+from app.persistence.place_repository import PlaceRepository
+from app.persistence.review_repository import ReviewRepository
 from app.persistence.amenity_repository import AmenityRepository
 
 
 class HBnBFacade:
     def __init__(self):
-        self.user_repo    = UserRepository()
-        self.place_repo   = PlaceRepository()
-        self.review_repo  = ReviewRepository()
+        self.user_repo = UserRepository()
+        self.place_repo = PlaceRepository()
+        self.review_repo = ReviewRepository()
         self.amenity_repo = AmenityRepository()
 
     # ── Users ────────────────────────────────────────────────
@@ -64,7 +64,7 @@ class HBnBFacade:
     # ── Places ──────────────────────────────────────────────
     def create_place(self, place_data):
         # pull off amenities so they don’t get passed to the model
-        amenity_ids = place_data.pop('amenities', [])
+        # amenity_ids = place_data.pop('amenities', [])
         # read owner_id from the JWT
         owner_id = get_jwt_identity()
         if not owner_id:
@@ -76,15 +76,15 @@ class HBnBFacade:
             price=place_data['price'],
             latitude=place_data['latitude'],
             longitude=place_data['longitude'],
-            owner_id=get_jwt_identity()
+            owner_id=owner_id
         )
 
         # attach any pre-existing amenities by id
-        for aid in amenity_ids:
-            amen = self.get_amenity(aid)
-            if not amen:
-                raise ValueError(f"Amenity {aid} not found")
-            place.add_amenity(amen)
+        # for aid in amenity_ids:
+        #     amen = self.get_amenity(aid)
+        #     if not amen:
+        #         raise ValueError(f"Amenity {aid} not found")
+        #     place.add_amenity(amen)
 
         return self.place_repo.add(place)
 
