@@ -35,8 +35,8 @@ dist/
 # Local scripts
 smoke_review.sh
 smoke_tests.sh
-test_db_full.sh
+/test_db_full.sh
 
-# Database folders
-instance/
-.development.db
+# ignore the entire instance folder (and everything in it)
+/instance/
+
