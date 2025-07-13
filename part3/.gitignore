@@ -37,3 +37,6 @@ smoke_review.sh
 smoke_tests.sh
 test_db.sh
 
+# Database folders
+instance/
+.development.db
