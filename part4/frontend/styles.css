@@ -1,0 +1,97 @@
+/*
+  This is a SAMPLE File to get you started. Follow the instructions on the project to complete the tasks.
+  You'll probably need to override some of theese styles.
+*/
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 1rem;
+}
+
+main {
+    padding: 2rem;
+}
+
+/* Card defaults */
+.place-card,
+.review-card {
+  margin: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+}
+
+/* Header */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+}
+.logo {
+  height: 40px;
+}
+.login-button {
+  background: var(--primary-color);
+  color: #fff;
+  padding: .5rem 1rem;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: .9rem;
+  color: #666;
+}
+
+/* Grid for index.html */
+#places-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
+  gap: 1rem;
+}
+
+/* Button styling */
+.details-button {
+  display: inline-block;
+  margin-top: .5rem;
+  padding: .5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  background: var(--accent-color);
+  color: #fff;
+  cursor: pointer;
+}
+
+/* Flexible variables */
+:root {
+  --primary-color: #2c3e50;
+  --accent-color:  #e74c3c;
+  --font-family:   'Helvetica Neue', Arial, sans-serif;
+}
+body {
+  font-family: var(--font-family);
+}

@@ -1,0 +1,7 @@
+Flask
+Flask-RESTX
+Flask-Bcrypt
+Flask-JWT-Extended
+Flask-SQLAlchemy
+SQLAlchemy
+pytest
