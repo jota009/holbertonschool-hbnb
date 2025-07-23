@@ -3,5 +3,6 @@ Flask-RESTX
 Flask-Bcrypt
 Flask-JWT-Extended
 Flask-SQLAlchemy
+Flask-Cors
 SQLAlchemy
 pytest

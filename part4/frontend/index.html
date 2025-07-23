@@ -3,26 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List of Places</title>
+    <title>Available Places</title>
+    <link rel="icon" href="images/logo.png" type="image/png">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
         <nav>
-            <a href="login.html" id="login-link">Login</a>
+          <!-- Logo on the left -->
+          <a href="index.html">
+            <img src="images/logo.png" alt="HBnB Logo" class="logo">
+          </a>
+          <!-- Login button on the right -->
+          <a href="login.html" class="login-button">Login</a>
         </nav>
     </header>
+
     <main>
+      <div class="container">
+        <h1 class="page-title">Available Places</h1>
         <section id="filter">
             <label for="price-filter">Max Price:</label>
-            <select id="price-filter">
-                <!-- Options will be populated dynamically -->
-            </select>
+            <select id="price-filter"></select>
         </section>
         <section id="places-list">
           <!-- JS will populate these place-card elements -->
         </section>
+      </div>
     </main>
+
+    <footer>
+      © 2025 HBnB – All rights reserved.
+    </footer>
+
     <script src="scripts.js"></script>
 </body>
 </html>

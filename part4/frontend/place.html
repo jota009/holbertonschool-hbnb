@@ -1,29 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Place Details</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>HBnB – Place Details</title>
+  <link rel="icon" href="images/logo.png" type="image/png">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <main>
-        <section id="place-details">
-            <!-- Place details will be populated dynamically -->
-        </section>
-        <section id="reviews">
-            <!-- Reviews will be populated dynamically -->
-        </section>
-        <section id="add-review">
-            <h2>Add a Review</h2>
-            <form id="review-form">
-                <label for="review-text">Review:</label>
-                <textarea id="review-text" name="review-text" required></textarea>
+  <header>
+    <nav>
+      <a href="index.html">
+        <img src="images/logo.png" class="logo" alt="HBnB Logo">
+      </a>
+      <a href="login.html" class="login-button">Login</a>
+    </nav>
+  </header>
 
-                <button type="submit">Submit</button>
-            </form>
-        </section>
-    </main>
-    <script src="scripts.js"></script>
+  <main>
+    <div class="container">
+      <!-- Title -->
+      <h1 id="place-title">Loading…</h1>
+
+      <!-- Place details card -->
+      <section class="place-details" id="place-details">
+        <!-- JS will inject host, price, description, amenities -->
+      </section>
+
+      <!-- Reviews list -->
+      <h2>Reviews</h2>
+      <section id="reviews-list">
+        <!-- JS will inject <article class="review-card"> per review -->
+      </section>
+
+      <!-- Add Review Button or Form -->
+      <section id="review-action">
+        <!-- JS toggles a button (if not logged in) or inline form (if logged in) -->
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 HBnB – All rights reserved.
+  </footer>
+  <script src="js/script.js"></script>
 </body>
 </html>

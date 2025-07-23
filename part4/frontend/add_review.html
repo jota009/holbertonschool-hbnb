@@ -1,25 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Review</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>HBnB – Add Review</title>
+  <link rel="icon" href="images/logo.png" type="image/png">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <main>
-        <!-- Add something to idfentify the place you're reviewing -->
-        <form id="review-form">
-            <h2>Add a Review</h2>
-            <label for="review">Your Review:</label>
-            <textarea id="review" name="review" required></textarea>
-            <label for="rating">Rating:</label>
-            <select id="rating" name="rating" required>
-                <!-- Options for rating -->
-            </select>
-            <button type="submit">Submit Review</button>
-        </form>
-    </main>
-    <script src="scripts.js"></script>
+  <header>
+    <nav>
+      <a href="index.html">
+        <img src="images/logo.png" class="logo" alt="HBnB Logo">
+      </a>
+      <a href="login.html" class="login-button">Login</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1>Reviewing: <span id="place-name">Loading…</span></h1>
+      <form id="review-form" class="add-review">
+        <label for="review-text">Your Review:</label>
+        <textarea id="review-text" name="text" required></textarea>
+
+        <label for="review-rating">Rating:</label>
+        <select id="review-rating" name="rating">
+          <option value="1">1 Star</option>
+          <option value="2">2 Stars</option>
+          <option value="3">3 Stars</option>
+          <option value="4">4 Stars</option>
+          <option value="5">5 Stars</option>
+        </select>
+
+        <button type="submit" class="details-button">Submit Review</button>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 HBnB – All rights reserved.
+  </footer>
+  <script src="js/script.js"></script>
 </body>
 </html>

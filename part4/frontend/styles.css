@@ -1,48 +1,29 @@
-/*
-  This is a SAMPLE File to get you started. Follow the instructions on the project to complete the tasks.
-  You'll probably need to override some of theese styles.
-*/
+/* Flexible variables */
+:root {
+  --header-bg:      #ff8000;    /* bright orange */
+  --button-bg:      #ff8000;    /* same orange for buttons */
+  --button-color:   #ffffff;    /* white text */
+  --card-bg:        #ffffff;    /* white cards */
+  --page-bg:        #f4f4f4;    /* light gray page background */
+  --font-family:    'Helvetica Neue', Arial, sans-serif;
+}
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
+  box-sizing: border-box;
 }
-
 body {
-    background-color: #f4f4f4;
-    color: #333;
+  margin: 0;
+  padding: 0;
+  background: var(--page-bg);
+  font-family: var(--font-family);
+  color: #333;
 }
 
+/* Header & Nav */
 header {
-    background-color: #333;
-    color: #fff;
-    padding: 1rem;
+  background: var(--header-bg);
 }
-
-nav a {
-    color: #fff;
-    text-decoration: none;
-    margin-left: 1rem;
-}
-
-main {
-    padding: 2rem;
-}
-
-/* Card defaults */
-.place-card,
-.review-card {
-  margin: 20px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
-}
-
-/* Header */
-header {
+header nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -52,46 +33,102 @@ header {
   height: 40px;
 }
 .login-button {
-  background: var(--primary-color);
-  color: #fff;
-  padding: .5rem 1rem;
-  border-radius: 5px;
+  background: none;
+  color: var(--button-color);
+  font-weight: bold;
   text-decoration: none;
+  padding: 0.5rem 1rem;
+}
+.login-button:hover {
+  opacity: 0.9;
 }
 
-/* Footer */
+main {
+  padding: 2rem;
+}
+
+/* Content Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.page-title {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Filter */
+#filter {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+#filter label {
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+/* Grid for places */
+#places-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Place card & Review card defaults */
+.place-card,
+.review-card {
+  margin: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: var(--card-bg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+.place-card:hover,
+.review-card:hover {
+  transform: translateY(-4px);
+}
+
+.place-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px 8px 0 0;
+}
+
+.card-body h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+.card-body .price {
+  margin: 0 0 1rem;
+  font-weight: bold;
+  color: #000000;
+}
+
+/* Details button */
+.details-button {
+  background: var(--button-bg);
+  color: var(--button-color);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.details-button:hover {
+  opacity: 0.9;
+}
+
 footer {
   text-align: center;
   padding: 1rem;
-  font-size: .9rem;
   color: #666;
-}
-
-/* Grid for index.html */
-#places-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
-  gap: 1rem;
-}
-
-/* Button styling */
-.details-button {
-  display: inline-block;
-  margin-top: .5rem;
-  padding: .5rem 1rem;
-  border: none;
-  border-radius: 5px;
-  background: var(--accent-color);
-  color: #fff;
-  cursor: pointer;
-}
-
-/* Flexible variables */
-:root {
-  --primary-color: #2c3e50;
-  --accent-color:  #e74c3c;
-  --font-family:   'Helvetica Neue', Arial, sans-serif;
-}
-body {
-  font-family: var(--font-family);
+  font-size: 0.9rem;
+  margin-top: 2rem;
+  background: #f4f4f4;
 }
