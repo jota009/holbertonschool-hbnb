@@ -9,7 +9,7 @@ def create_app(config_class=None):
     config_class = config_class or DevelopmentConfig
 
     app = Flask(__name__)
-    CORS(app)
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
     app.config.from_object(config_class)
 
     # Initialize extensions
@@ -29,7 +29,8 @@ def create_app(config_class=None):
         version='1.0',
         title='HBnB API',
         description='HBnB Application API',
-        doc='/api/v1/'
+        doc='/api/v1/',
+        strict_slashes=False
     )
 
     api.add_namespace(auth_ns, path='/api/v1/auth')

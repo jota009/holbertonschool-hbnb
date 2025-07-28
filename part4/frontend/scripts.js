@@ -10,25 +10,43 @@ function getCookie(name) {
 
 document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.getElementById('login-form');
-  // If not on login.html, check for token
-  if (!loginForm) {
-    const token = getCookie('access_token');
-    if (!token) {
-      // no token -> bounce to login
-      window.location.href = 'login.html';
-      return;
-    }
-  }
-  // If on login.html wire up the form
-  if (loginForm) {
-    loginForm.addEventListener('submit', handleLogin);
-    return;
-  }
-  // Otherwise we must be on index.html or ...
-  if (document.getElementById('places-list')) {
-    initPlacesList();
-  }
-  // place.html and add-review later
+  const loginLink = document.getElementById('login-link');
+  const logoutLink = document.getElementById('logout-link');
+  const placesList = document.getElementById('places-list');
+  const token = getCookie('access_token');
+ // ── Show / hide login vs logout ────
+ if (loginLink)  loginLink.style.display  = token ? 'none' : 'inline-block';
+ if (logoutLink) logoutLink.style.display = token ? 'inline-block' : 'none';
+
+ // ── Wire up the logout click ───
+ if (logoutLink) {
+   logoutLink.addEventListener('click', ev => {
+     ev.preventDefault();
+     // Clear the cookie
+     document.cookie = 'access_token=; path=/; max-age=0';
+     // Redirect to login page
+     window.location.href = 'login.html';
+   });
+ }
+
+ // ── If on login.html, handle that form and stop ────────
+ if (loginForm) {
+   loginForm.addEventListener('submit', handleLogin);
+   return;
+ }
+
+ // ── Protect other pages: if no token, go to login ──────
+ if (!token) {
+   window.location.href = 'login.html';
+   return;
+ }
+
+ // ── If this is index.html, initialize the places list ─
+ if (placesList) {
+   initPlacesList();
+ }
+
+ // ── (You can add place.html and add_review.html initializers here)
 });
 
 /**
@@ -87,20 +105,38 @@ function renderPlaces(list) {
 
 async function initPlacesList() {
   const filterEl  = document.getElementById('price-filter');
+  const token = getCookie('access_token');
+
   try {
     // 1. Fetch places from your API
-    const res    = await fetch('http://localhost:5000/api/v1/places');
+    const res    = await fetch('http://localhost:5000/api/v1/places/',{
+      headers: token
+        ? { 'Authorization': `Bearer ${token}`}
+        : {}
+    });
     if (!res.ok) throw new Error(`Server responded ${res.status}`);
     const places = await res.json();
 
+    // added to test back to index
+    if(!token) {
+      window.location.href='login.html'
+      return;
+    }
     console.log('Fetched places:', places);
     console.log('Number of places:', places.length);
 
-    // 2. Build the Max-Price dropdown
-    const prices = [...new Set(places.map(p => p.price))].sort((a, b) => a - b);
-    filterEl.innerHTML =
-      '<option value="">All</option>' +
-      prices.map(p => `<option value="${p}">$${p}</option>`).join('');
+    //  TEMPORARILY USE FIXED PRICE OPTIONS, THIS DYNAMIC OPTION CAN BE CHOSEN LATER
+    //const prices = [...new Set(places.map(p => p.price))].sort((a, b) => a - b);
+    //filterEl.innerHTML =
+    //  '<option value="">All</option>' +
+    //  prices.map(p=> `<option value="${p}">$${p}</option>`).join('');
+
+    filterEl.innerHTML = `
+      <option value="">ALL</option>
+      <option value="10">$10</option>
+      <option value="50">$50</option>
+      <option value="100">$100</option>
+    `;
 
     // 3. Initial render of all places
     renderPlaces(places);
