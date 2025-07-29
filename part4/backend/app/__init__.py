@@ -9,7 +9,10 @@ def create_app(config_class=None):
     config_class = config_class or DevelopmentConfig
 
     app = Flask(__name__)
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    CORS(app,
+         resources={r"/api/*": {"origins": "*"}},
+         supports_credentials=True,
+         methods=["GET","POST","PUT","DELETE","OPTIONS"])
     app.config.from_object(config_class)
 
     # Initialize extensions

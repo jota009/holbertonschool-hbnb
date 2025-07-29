@@ -44,8 +44,9 @@ class ReviewList(Resource):
         """Authenticated: Register a new review (not on your own place)"""
         user_id = get_jwt_identity()
         data = api.payload.copy()
+        place_id = data.get('place_id')
 
-        place = facade.get_place(data['place_id'])
+        place = facade.get_place(place_id)
         if not place:
             abort(404, 'Place not found')
         if place.owner.id == user_id:
