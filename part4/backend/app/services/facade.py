@@ -133,7 +133,7 @@ class HBnBFacade:
         place = self.get_place(place_id)
         if not place:
             raise ValueError("Place not found")
-        return self.review_repo.get_all() if not hasattr(place, 'reviews') else place.reviews
+        return self.review_repo.get_by_place_id(place_id)
 
     def update_review(self, review_id, updates: dict):
         return self.review_repo.update(review_id, updates)

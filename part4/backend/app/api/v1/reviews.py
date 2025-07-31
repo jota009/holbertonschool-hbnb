@@ -5,6 +5,13 @@ from app.services import facade
 
 api = Namespace('reviews', description='Review operations')
 
+
+user_model = api.model('User', {
+    'id': fields.String,
+    'first_name': fields.String,
+    'last_name': fields.String,
+})
+
 # Input model for POST & PUT
 review_input = api.model('ReviewInput', {
     'place_id': fields.String(required=True, description='Place UUID'),
@@ -17,7 +24,7 @@ review_model = api.model('Review', {
     'id': fields.String(readonly=True, description='Review UUID'),
     'text': fields.String(description='Text of the review'),
     'rating': fields.Integer(description='Rating (1-5)'),
-    'user_id': fields.String(attribute='user.id', description='User UUID'),
+    'user': fields.Nested(user_model),
     'place_id': fields.String(attribute='place.id', description='Place UUID')
 })
 
