@@ -10,12 +10,12 @@ function getCookie(name) {
 
 document.addEventListener('DOMContentLoaded', () => {
   // Page detection handles
-  const loginForm   = document.getElementById('login-form');
-  const loginLink   = document.getElementById('login-link');
-  const logoutLink  = document.getElementById('logout-link');
-  const placesList  = document.getElementById('places-list');
-  const placeDetail = document.getElementById('place-details');
-  const token       = getCookie('access_token');
+  const loginForm    = document.getElementById('login-form');
+  const loginLink    = document.getElementById('login-link');
+  const logoutLink   = document.getElementById('logout-link');
+  const placesList   = document.getElementById('places-list');
+  const placeDetail  = document.getElementById('place-details');
+  const token        = getCookie('access_token');
 
   // ── Show / hide Login vs Logout ─────────────────────────
   if (loginLink)  loginLink.style.display  = token ? 'none' : 'inline-block';
@@ -43,11 +43,79 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── Index page (List of Places) initialization ───────────
-  if (placesList)    initPlacesList();
+  if (placesList) {
+    initPlacesList();
+  }
 
   // ── Place Details page initialization ────────────────────
-  if (placeDetail)   initPlaceDetails();
-});
+  if (placeDetail) {
+    initPlaceDetails();
+  }
+
+  // ── Add Review page initialization ────────────────────────
+  const placeNameEl = document.getElementById('place-name');
+  if (placeNameEl) {
+    // 1) Redirect if not authenticated
+    const addToken = getCookie('access_token');
+    if (!addToken) {
+      window.location.href = 'index.html';
+      return;
+    }
+
+    // 2) Fill in place name
+    const placeId = new URLSearchParams(window.location.search).get('id');
+    fetch(`http://localhost:5000/api/v1/places/${placeId}`, {
+      headers: { 'Authorization': `Bearer ${addToken}` }
+    })
+      .then(res => res.ok ? res.json() : Promise.reject(res.status))
+      .then(p => placeNameEl.innerText = p.title)
+      .catch(() => placeNameEl.innerText = 'Unkown place');
+
+
+    // 3) Handle review submission
+    const reviewForm = document.getElementById('review-form');
+    const feedbackEl = document.getElementById('review-feedback');
+    reviewForm.addEventListener('submit', async ev => {
+      ev.preventDefault();
+      feedbackEl.textContent = '';
+      feedbackEl.className   = 'feedback';
+
+      const text   = document.getElementById('review-text').value.trim();
+      const rating = +document.getElementById('review-rating').value;
+
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/v1/reviews/`, {
+            method:  'POST',
+            headers: {
+              'Content-Type':  'application/json',
+              'Authorization': `Bearer ${addToken}`
+            },
+            body: JSON.stringify({ place_id: placeId, text, rating })
+          }
+        );
+        const payload = await res.json().catch(() => ({}));
+
+        if (res.ok) {
+          feedbackEl.textContent = '🎉 Review submitted successfully!';
+          feedbackEl.classList.add('success');
+          reviewForm.reset();
+          // fetch frech reviews and redraw the list
+          loadAndRenderReviews(placeId);
+        } else {
+          feedbackEl.textContent = payload.message || `Error ${res.status}`;
+          feedbackEl.classList.add('error');
+        }
+      } catch {
+        feedbackEl.textContent = 'Network error – please try again later.';
+        feedbackEl.classList.add('error');
+      }
+    });
+  } // ← end if(addReviewForm)
+
+}); // ← end DOMContentLoaded
+
+
 
 // ==========================================
 // 1. LOGIN HANDLER
@@ -102,7 +170,7 @@ async function initPlacesList() {
   const token    = getCookie('access_token');
 
   try {
-    const res = await fetch('http://localhost:5000/api/v1/places/', {
+    const res    = await fetch('http://localhost:5000/api/v1/places/', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     if (!res.ok) throw new Error(`Status ${res.status}`);
@@ -115,6 +183,7 @@ async function initPlacesList() {
       <option value="100">$100</option>
     `;
     renderPlaces(places);
+
     filterEl.addEventListener('change', () => {
       const max    = Number(filterEl.value);
       const subset = filterEl.value
@@ -151,7 +220,7 @@ async function initPlaceDetails() {
     // Render main info
     const amenities = place.amenities.map(a => a.name).join(', ');
     detailsEl.innerHTML = `
-      <div class="place-info">
+      <div class="place-info-card">
         <h1>${place.title}</h1>
         <p><strong>Host:</strong> ${place.owner.first_name} ${place.owner.last_name}</p>
         <p><strong>Price:</strong> $${place.price}/night</p>
@@ -159,19 +228,9 @@ async function initPlaceDetails() {
         <p><strong>Amenities:</strong> ${amenities}</p>
       </div>`;
 
+    await loadAndRenderReviews(placeId);
+
     // Render reviews
-    const valid = place.reviews.filter(r => r.user);
-    reviewsEl.innerHTML = '<h2>Reviews</h2>' +
-      (valid.length
-        ? valid.map(r => `
-            <article class="review-card">
-              <p><strong>${r.user.first_name} ${r.user.last_name}</strong></p>
-              <p>${r.text}</p>
-              <p>Rating: ${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</p>
-            </article>`
-          ).join('')
-        : '<p>No reviews yet.</p>'
-      );
 
     // Toggle add‑review form
     addReviewEl.style.display = token ? 'block' : 'none';
@@ -180,8 +239,8 @@ async function initPlaceDetails() {
     form.addEventListener('submit', async ev => {
       ev.preventDefault();
       const feedbackEl = document.getElementById('review-feedback');
-      const text       = document.getElementById('review-text').value.trim();
-      const rating     = +document.getElementById('review-rating').value;
+      const text = document.getElementById('review-text').value.trim();
+      const rating = +document.getElementById('review-rating').value;
 
       feedbackEl.textContent = '';
       feedbackEl.className   = '';
@@ -204,6 +263,7 @@ async function initPlaceDetails() {
         }
         feedbackEl.textContent = 'Your review has been posted!';
         feedbackEl.classList.add('success');
+        form.reset();
         await loadAndRenderReviews(placeId);
 
       } catch {
@@ -224,20 +284,20 @@ async function loadAndRenderReviews(placeId) {
   const token     = getCookie('access_token');
   const reviewsEl = document.getElementById('reviews');
 
-   // re‑GET the single place (so you get updated .reviews[])
-   const res   = await fetch(
-    `http://localhost:5000/api/v1/places/${placeId}`, {
+  // re‑GET the single place (so you get updated .reviews[])
+  const res   = await fetch(
+    `http://localhost:5000/api/v1/places/${placeId}/reviews`, {
       headers: { 'Authorization': `Bearer ${token}` }
     }
   );
   if (!res.ok) {
-    reviewsEl.innerHTML = `<p>Failed to load reviews: ${res.status}</p>`;
+    reviewsEl.innerHTML = `<h2>Reviews</h2><p>Failed to load reviews: ${res.status}</p>`;
     return;
   }
-  const place = await res.json();
+  const reviews = await res.json();
 
   // rebuild just the reviews block
-  const valid = place.reviews.filter(r => r.user);
+  const valid = reviews.filter(r => r.user);
   reviewsEl.innerHTML = '<h2>Reviews</h2>' +
     (valid.length
       ? valid.map(r => `

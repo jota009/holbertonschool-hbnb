@@ -41,3 +41,11 @@ class Place(BaseModel):
         backref=db.backref('places', lazy='select'),
         lazy='subquery'
     )
+
+    def add_amenity(self, amenity):
+        """
+        Attach an Amenity object to this Place,
+        avoiding duplicates.
+        """
+        if amenity not in self.amenities:
+            self.amenities.append(amenity)

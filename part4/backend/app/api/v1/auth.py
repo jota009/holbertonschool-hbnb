@@ -18,11 +18,13 @@ class Login(Resource):
         """Authenticate user and return a JWT token."""
         data = api.payload
         user = facade.get_user_by_email(data['email'])
+        email = data['email'].strip().lower()
+        user  = facade.get_user_by_email(email)
         if not user or not user.verify_password(data['password']):
             return {'message': 'Invalid credentials'}, 401
         access_token = create_access_token(
-            identity=str(user.id),
-            additional_claims={'is_admin': user.is_admin})
+            identity = str(user.id),
+            additional_claims = {'is_admin': user.is_admin})
         return {'access_token': access_token}, 200
 
 @api.route('/protected')

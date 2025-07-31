@@ -23,7 +23,7 @@ class HBnBFacade:
         user = User(
             first_name=user_data['first_name'],
             last_name=user_data['last_name'],
-            email=user_data['email'],
+            email = user_data['email'].strip().lower(),
             is_admin=user_data.get('is_admin', False)
         )
         user.hash_password(user_data['password'])
@@ -63,13 +63,19 @@ class HBnBFacade:
 
     # ── Places ──────────────────────────────────────────────
     def create_place(self, place_data):
-        # pull off amenities so they don’t get passed to the model
-        # amenity_ids = place_data.pop('amenities', [])
-        # read owner_id from the JWT
-        owner_id = get_jwt_identity()
+        """
+        Create a new place. Expects:
+          - title, description, price, latitude, longitude in place_data
+          - owner_id in place_data when seeding (optional)
+        """
+         # pull off any amenity IDs so they don’t get passed blindly into the model
+        amenity_ids = place_data.pop('amenities', [])
+        # 1) Determine owner: use explicit owner_id for scripts/seed, otherwise JWT identity
+        owner_id = place_data.get('owner_id') or get_jwt_identity()
         if not owner_id:
             raise ValueError("Must be authenticated to create a place")
 
+        # 2) Construct Place model
         place = Place(
             title=place_data['title'],
             description=place_data.get('description', ''),
@@ -78,14 +84,13 @@ class HBnBFacade:
             longitude=place_data['longitude'],
             owner_id=owner_id
         )
-
-        # attach any pre-existing amenities by id
-        # for aid in amenity_ids:
-        #     amen = self.get_amenity(aid)
-        #     if not amen:
-        #         raise ValueError(f"Amenity {aid} not found")
-        #     place.add_amenity(amen)
-
+        # now attach any pre‐existing amenities by id
+        for aid in amenity_ids:
+            amen = self.get_amenity(aid)
+            if not amen:
+                raise ValueError(f"Amenity {aid} not found")
+            place.add_amenity(amen)
+        # 3) Persist and return
         return self.place_repo.add(place)
 
     def get_place(self, place_id):

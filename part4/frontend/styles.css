@@ -1,144 +1,256 @@
-/* Flexible variables */
-:root {
-  --header-bg:      #ff8000;    /* bright orange */
-  --button-bg:      #ff8000;    /* same orange for buttons */
-  --button-color:   #ffffff;    /* white text */
-  --card-bg:        #ffffff;    /* white cards */
-  --page-bg:        #f4f4f4;    /* light gray page background */
-  --font-family:    'Helvetica Neue', Arial, sans-serif;
-}
+/* ───────────────────────────────────────────────────────────────
+   Flexible variables
+   ─────────────────────────────────────────────────────────────── */
+   :root {
+    --header-bg:      #ff8000;    /* bright orange */
+    --button-bg:      #ff8000;    /* same orange for buttons */
+    --button-color:   #ffffff;    /* white text */
+    --card-bg:        #ffffff;    /* white cards */
+    --page-bg:        #f4f4f4;    /* light gray page background */
+    --font-family:    'Helvetica Neue', Arial, sans-serif;
+  }
 
-* {
-  box-sizing: border-box;
-}
-body {
-  margin: 0;
-  padding: 0;
-  background: var(--page-bg);
-  font-family: var(--font-family);
-  color: #333;
-}
+  /* ───────────────────────────────────────────────────────────────
+     Reset & Base
+     ─────────────────────────────────────────────────────────────── */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--page-bg);
+    font-family: var(--font-family);
+    color: #333;
+  }
 
-.sr-only {
-  position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
+  /* visually hidden */
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
 
-/* Header & Nav */
-header {
-  background: var(--header-bg);
-}
-header nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-}
-.logo {
-  height: 40px;
-}
-.login-button {
-  background: none;
-  color: var(--button-color);
-  font-weight: bold;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-}
-.login-button:hover {
-  opacity: 0.9;
-}
+  /* ───────────────────────────────────────────────────────────────
+     Header & Nav
+     ─────────────────────────────────────────────────────────────── */
+  header {
+    background: var(--header-bg);
+  }
+  header nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+  }
+  .logo {
+    height: 40px;
+  }
+  .login-button {
+    background: none;
+    color: var(--button-color);
+    font-weight: bold;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+  }
+  .login-button:hover {
+    opacity: 0.9;
+  }
 
-main {
-  padding: 2rem;
-}
+  /* ───────────────────────────────────────────────────────────────
+     Main & Container
+     ─────────────────────────────────────────────────────────────── */
+  main {
+    padding: 2rem;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
 
-/* Content Container */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  background: #fff;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-.page-title {
-  text-align: center;
-  margin-bottom: 1rem;
-}
+  /* ───────────────────────────────────────────────────────────────
+     Index: Filter + Grid
+     ─────────────────────────────────────────────────────────────── */
+  #filter {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  #filter label {
+    font-weight: bold;
+    margin-right: 0.5rem;
+  }
+  #places-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
 
-/* Filter */
-#filter {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-#filter label {
-  font-weight: bold;
-  margin-right: 0.5rem;
-}
+  /* ───────────────────────────────────────────────────────────────
+     Place & Review Cards
+     ─────────────────────────────────────────────────────────────── */
+  .place-card,
+  .review-card {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: var(--card-bg);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+  }
+  .place-card:hover,
+  .review-card:hover {
+    transform: translateY(-4px);
+  }
 
-/* Grid for places */
-#places-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
+  /* place‐card image */
+  .place-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px 8px 0 0;
+  }
+  .card-body h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.2rem;
+  }
+  .card-body .price {
+    margin: 0 0 1rem;
+    font-weight: bold;
+    color: #000;
+  }
 
-/* Place card & Review card defaults */
-.place-card,
-.review-card {
-  margin: 20px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: var(--card-bg);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
-}
-.place-card:hover,
-.review-card:hover {
-  transform: translateY(-4px);
-}
+  /* ───────────────────────────────────────────────────────────────
+     Buttons
+     ─────────────────────────────────────────────────────────────── */
+  .details-button {
+    background: var(--button-bg);
+    color: var(--button-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .details-button:hover {
+    opacity: 0.9;
+  }
 
-.place-card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 8px 8px 0 0;
-}
+  /* ───────────────────────────────────────────────────────────────
+     Footer
+     ─────────────────────────────────────────────────────────────── */
+  footer {
+    text-align: center;
+    padding: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 2rem;
+    background: var(--page-bg);
+  }
 
-.card-body h3 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-.card-body .price {
-  margin: 0 0 1rem;
-  font-weight: bold;
-  color: #000000;
-}
+  /* ───────────────────────────────────────────────────────────────
+     ADD REVIEW Page Overrides
+     ─────────────────────────────────────────────────────────────── */
+  .add-review {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .add-review h2 {
+    margin-bottom: 1rem;
+  }
+  .add-review label {
+    font-weight: bold;
+    display: block;
+    margin-top: 1rem;
+  }
+  .add-review textarea,
+  .add-review select,
+  .add-review input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 0.25rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+  }
+  /* full‑width submit button */
+  .add-review button[type="submit"] {
+    display: block;
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 0.75rem;
+    background: var(--button-bg);
+    color: var(--button-color);
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+  .add-review button[type="submit"]:hover {
+    opacity: 0.9;
+  }
 
-/* Details button */
-.details-button {
-  background: var(--button-bg);
-  color: var(--button-color);
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.details-button:hover {
-  opacity: 0.9;
-}
+  /* feedback messages */
+  #review-feedback,
+  .feedback {
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+  #review-feedback.success,
+  .feedback.success {
+    color: green;
+  }
+  #review-feedback.error,
+  .feedback.error {
+    color: red;
+  }
 
-footer {
-  text-align: center;
-  padding: 1rem;
-  color: #666;
-  font-size: 0.9rem;
-  margin-top: 2rem;
-  background: #f4f4f4;
-}
+  /* ───────────────────────────────────────────────────────────────
+     Place Details “card”
+     ─────────────────────────────────────────────────────────────── */
+  .place-info-card {
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    text-align: center;
+  }
+  .place-info-card h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .place-info-card p {
+    margin: 0.5rem 0;
+  }
+  .place-info-card p strong {
+    display: inline-block;
+    width: 100px;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     Reviews section wrapper
+     ─────────────────────────────────────────────────────────────── */
+  #reviews {
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  /* small tweak: stack review cards */
+  .review-card {
+    margin-top: 1rem;
+    padding: 1rem;
+  }

@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 from app import create_app, db
-
+from scripts.seed import run_seed
 
 if __name__ == '__main__':
     app = create_app()
 
     # reset and recreate all tables so smoke_tests can be re-run
     with app.app_context():
-        db.drop_all()
+        # db.drop_all()
         db.create_all()
+        run_seed()
     # serve on 0.0.0.0:5000, disable the extra reloader process
     app.run(
         host='0.0.0.0',

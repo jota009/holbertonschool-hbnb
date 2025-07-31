@@ -37,7 +37,7 @@ class ReviewList(Resource):
 
     @jwt_required()
     @api.expect(review_input, validate=True)
-    @api.marshal_list_with(review_model, code=201)
+    @api.marshal_with(review_model, code=201)
     @api.response(400, 'Cannot review own place or duplicate review')
     @api.response(404, 'Place not found')
     def post(self):
