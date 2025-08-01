@@ -21,19 +21,31 @@
     </header>
 
     <main>
-      <div class="container">
-        <h1 class="page-title">Available Places</h1>
-        <section id="filter">
-          <h2 class="sr-only">Filter Places</h2>
-            <label for="price-filter">Max Price:</label>
-            <select id="price-filter"></select>
-        </section>
-        <section id="places-list">
-          <h2 class="sr-only">List of Places</h2>
-          <!-- JS will populate these place-card elements -->
-        </section>
-      </div>
+      <section class="places-page">
+        <div class="places-header">
+          <div class="title-left">
+            <h1 class="page-title">Available Places</h1>
+          </div>
+          <div class="title-right">
+            <label for="price-filter">Max Price:
+              <select id="price-filter">
+                <option value="">All</option>
+                <option value="10">$10</option>
+                <option value="50">$50</option>
+                <option value="100">$100</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="places-list-card">
+          <div id="places-list" class="places-grid">
+            <!-- JS renders each place-card here -->
+          </div>
+        </div>
+      </section>
     </main>
+
 
     <footer>
       © 2025 HBnB – All rights reserved.
