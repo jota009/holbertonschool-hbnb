@@ -21,8 +21,8 @@ def run_seed():
             print("Admin already exists:", admin.id)
         else:
             admin = facade.create_user({
-                "first_name": "First",
-                "last_name":  "Admin",
+                "first_name": "Jay",
+                "last_name":  "Ramos",
                 "email":      ADMIN_EMAIL,
                 "password":   ADMIN_PASSWORD,
                 "is_admin":   True
@@ -37,8 +37,8 @@ def run_seed():
             print("Reviewer already exists:", reviewer.id)
         else:
             reviewer = facade.create_user({
-                "first_name": "Rev",
-                "last_name":  "User",
+                "first_name": "John",
+                "last_name":  "Cena",
                 "email":      REV_EMAIL,
                 "password":   REV_PASSWORD,
                 # is_admin defaults to False

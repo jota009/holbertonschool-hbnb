@@ -238,6 +238,24 @@
     width: 100px;
   }
 
+  .place-title-wrapper {
+    max-width: 800px;
+    margin: 0 auto 1.5rem;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* centers title and card */
+    gap: 12px; /* space between title and card */
+  }
+
+  .place-title {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    width: 100%;
+  }
+
   /* ───────────────────────────────────────────────────────────────
      Reviews section wrapper
      ─────────────────────────────────────────────────────────────── */
@@ -254,3 +272,26 @@
     margin-top: 1rem;
     padding: 1rem;
   }
+
+  /* heading sits above, not inside the white card */
+.reviews-heading-wrapper {
+  max-width: 800px;
+  margin: 2rem auto 0;
+  padding: 0 16px;
+}
+
+.reviews-heading {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* card for the list of reviews */
+.reviews-list-card {
+  max-width: 800px;
+  margin: 0.5rem auto 1.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 30px -10px rgba(0,0,0,0.08);
+}

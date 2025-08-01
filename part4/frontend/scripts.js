@@ -218,14 +218,21 @@ async function initPlaceDetails() {
     const place = await res.json();
 
     // Render main info
-    const amenities = place.amenities.map(a => a.name).join(', ');
+    const amenitiesHtml = place.amenities
+    .map(a => `<span class="amenity-label">${a.name}</span>`)
+    .join(', ');
+
     detailsEl.innerHTML = `
-      <div class="place-info-card">
-        <h1>${place.title}</h1>
-        <p><strong>Host:</strong> ${place.owner.first_name} ${place.owner.last_name}</p>
-        <p><strong>Price:</strong> $${place.price}/night</p>
-        <p><strong>Description:</strong> ${place.description}</p>
-        <p><strong>Amenities:</strong> ${amenities}</p>
+      <div class="place-title-wrapper">
+        <h1 class="place-title">${place.title}</h1>
+        <div class="place-info-card">
+          <div class="meta">
+            <p><strong>Host:</strong> ${place.owner.first_name} ${place.owner.last_name}</p>
+            <p><strong>Price:</strong> $${place.price}/night</p>
+            <p><strong>Description:</strong> ${place.description}</p>
+            <p><strong>Amenities:</strong> ${amenitiesHtml}</p>
+          </div>
+        </div>
       </div>`;
 
     await loadAndRenderReviews(placeId);
@@ -283,6 +290,7 @@ async function initPlaceDetails() {
 async function loadAndRenderReviews(placeId) {
   const token     = getCookie('access_token');
   const reviewsEl = document.getElementById('reviews');
+  const reviewsListCard = document.getElementById('reviews-list'); // inner card container
 
   // re‑GET the single place (so you get updated .reviews[])
   const res   = await fetch(
@@ -291,22 +299,23 @@ async function loadAndRenderReviews(placeId) {
     }
   );
   if (!res.ok) {
-    reviewsEl.innerHTML = `<h2>Reviews</h2><p>Failed to load reviews: ${res.status}</p>`;
+    reviewsListCard.innerHTML = `<p>Failed to load reviews: ${res.status}</p>`;
     return;
   }
   const reviews = await res.json();
-
-  // rebuild just the reviews block
   const valid = reviews.filter(r => r.user);
-  reviewsEl.innerHTML = '<h2>Reviews</h2>' +
-    (valid.length
-      ? valid.map(r => `
+  const reviewsHtml = valid.length
+    ? valid.map(r => {
+        const first = r.user?.first_name || 'John';
+        const last = r.user?.last_name || 'Cena';
+        return `
           <article class="review-card">
-            <p><strong>${r.user.first_name} ${r.user.last_name}</strong></p>
+            <p><strong>${first} ${last}</strong></p>
             <p>${r.text}</p>
-            <p>Rating: ${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</p>
-          </article>`
-        ).join('')
-      : '<p>No reviews yet.</p>'
-    );
+            <p>Rating: ${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</p>
+          </article>`;
+      }).join('')
+    : '<p>No reviews yet.</p>';
+
+  reviewsListCard.innerHTML = reviewsHtml;
 }
