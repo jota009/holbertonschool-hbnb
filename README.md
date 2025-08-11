@@ -84,7 +84,7 @@ The HBnB application follows a **three-layer architecture**:
 - **ER Diagrams:** visualize relationships with Mermaid.js
 - **Testing:** model tests (pytest), SQL script validations, integration tests
 
-### Part 4 – Frontend (NEW) ✅
+### Part 4 – Frontend
 - Simple, framework-free UI (HTML/CSS/JS)
 - Login/Register with **JWT stored in a cookie**
 - Pages for **Places list**, **Place details**, **Reviews**, and basic static pages
