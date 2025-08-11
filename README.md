@@ -84,6 +84,29 @@ The HBnB application follows a **three-layer architecture**:
 - **ER Diagrams:** visualize relationships with Mermaid.js
 - **Testing:** model tests (pytest), SQL script validations, integration tests
 
+### Part 4 – Frontend (NEW) ✅
+- Simple, framework-free UI (HTML/CSS/JS)
+- Login/Register with **JWT stored in a cookie**
+- Pages for **Places list**, **Place details**, **Reviews**, and basic static pages
+- Clear **loading / error / empty** states
+- Accessible, responsive layout
+- Small utilities for API calls and auth state
+
+## ▶️ How to Use (High Level)
+1. **Start the backend API** (Parts 2–3).
+2. **Open the frontend** (Part 4) in a browser as a static site.
+3. **Configure the API URL** in the frontend config file (see Part 4 README).
+4. **Login/Register** to unlock authenticated actions (e.g., adding reviews).
+
+## 🧪 Testing
+- Backend: unit/integration tests for services and endpoints.
+- Frontend: manual verification in the browser; E2E tools can be added later.
+
+## 📎 Documentation
+- Diagrams & notes: `docs/`
+- API details: `part2/README.md`
+- Database notes: `part3/README.md`
+- Frontend details: `part4/README.md`
 ---
 
 ✍️ **Author**
